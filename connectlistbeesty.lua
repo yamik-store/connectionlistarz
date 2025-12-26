@@ -2,7 +2,6 @@ script_name("ConnectList")
 script_author("Beesty")
 script_version("26.12.2025")
 
--- AUTO UPDATE
 local enable_autoupdate = true
 local autoupdate_loaded = false
 local Update = nil
@@ -162,18 +161,14 @@ function loadAllServers()
         local file = io.open(serversFile, "r")
         if file then
             for line in file:lines() do
-                -- Find IP, port and name
                 local ip, port_str, name = line:match("([^,]+),([^,]+),(.+)$")
                 if ip and port_str and name then
-                    -- Clean strings
                     ip = ip:gsub("%s+", "")
                     port_str = port_str:gsub("%s+", "")
                     name = name:gsub("%s+$", ""):gsub("^%s+", "")
                     
-                    -- Convert port to number
                     local port = tonumber(port_str)
                     
-                    -- Check all data
                     if ip and port and name and string.len(ip) > 0 and string.len(name) > 0 then
                         table.insert(servers, {
                             ip = ip,
@@ -188,7 +183,6 @@ function loadAllServers()
             file:close()
         end
     else
-        -- If file doesn't exist - use default
         for _, server in ipairs(defaultServers) do
             table.insert(servers, {
                 ip = server[1],
@@ -196,7 +190,6 @@ function loadAllServers()
                 name = server[3]
             })
         end
-        -- Save to file
         saveAllServers()
     end
     
@@ -309,7 +302,6 @@ function main()
         sampSetLocalPlayerName(savedNick)
     end
     
-    -- ENGLISH CHAT MESSAGES
     sampAddChatMessage("[CONNECTION] ConnectList v" .. thisScript().version .. " loaded!", 0x00FF00)
     sampAddChatMessage("[CONNECTION] Servers loaded: " .. serverCount, 0x00FF00)
     sampAddChatMessage("[CONNECTION] Commands: /conlist or /clist", 0x00FF00)
@@ -345,7 +337,6 @@ function imgui.OnDrawFrame()
     
     imgui.Begin("ConnectList v" .. thisScript().version .. " | Server List", conmenu, imgui.WindowFlags.NoCollapse)
     
-    -- ALL ENGLISH INTERFACE
     imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), "Nickname:")
     imgui.SameLine()
     imgui.PushItemWidth(200)
