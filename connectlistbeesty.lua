@@ -167,40 +167,41 @@ function loadAllServers()
         local file = io.open(serversFile, "r")
         if file then
             for line in file:lines() do
-                local parts = {}
-                for part in line:gmatch("([^,]+)") do
-                    table.insert(parts, part:gsub("^%s*(.-)%s*$", "%1"))
-                end
-                
-                if #parts >= 3 then
-                    local ip = parts[1]
-                    local port_str = parts[2]
-                    local name = parts[3]
+                -- Ищем IP, порт и название
+                local ip, port_str, name = line:match("([^,]+),([^,]+),(.+)$")
+                if ip and port_str and name then
+                    -- Очистка строк
+                    ip = ip:gsub("%s+", "")
+                    port_str = port_str:gsub("%s+", "")
+                    name = name:gsub("%s+$", ""):gsub("^%s+", "")
                     
+                    -- Преобразуем порт в число
                     local port = tonumber(port_str)
-                    if not port then
-                        port = 7777
-                    end
                     
+                    -- Проверяем все данные
                     if ip and port and name and string.len(ip) > 0 and string.len(name) > 0 then
                         table.insert(servers, {
                             ip = ip,
-                            port = port,
+                            port = port,  -- Убедись что port это число
                             name = name
                         })
+                    else
+                        print("Ошибка данных сервера: " .. line)
                     end
                 end
             end
             file:close()
         end
     else
+        -- Если файла нет - используем стандартные
         for _, server in ipairs(defaultServers) do
             table.insert(servers, {
                 ip = server[1],
-                port = server[2],
+                port = server[2],  -- Здесь порт уже число
                 name = server[3]
             })
         end
+        -- Сохраняем в файл
         saveAllServers()
     end
     
@@ -480,3 +481,4 @@ function apply_custom_style()
 end
 
 apply_custom_style()
+
