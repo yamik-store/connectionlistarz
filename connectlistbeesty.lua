@@ -6,7 +6,7 @@ local enable_autoupdate = true -- false to disable auto-update + disable sending
 local autoupdate_loaded = false
 local Update = nil
 if enable_autoupdate then
-    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Îáíàðóæåíî îáíîâëåíèå. Ïûòàþñü îáíîâèòüñÿ c '..thisScript().version..' íà '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Çàãðóæåíî %d èç %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Çàãðóçêà îáíîâëåíèÿ çàâåðøåíà.')sampAddChatMessage(b..'Îáíîâëåíèå çàâåðøåíî!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Îáíîâëåíèå ïðîøëî íåóäà÷íî. Çàïóñêàþ óñòàðåâøóþ âåðñèþ..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Îáíîâëåíèå íå òðåáóåòñÿ.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Íå ìîãó ïðîâåðèòü îáíîâëåíèå. Ñìèðèòåñü èëè ïðîâåðüòå ñàìîñòîÿòåëüíî íà '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, âûõîäèì èç îæèäàíèÿ ïðîâåðêè îáíîâëåíèÿ. Ñìèðèòåñü èëè ïðîâåðüòå ñàìîñòîÿòåëüíî íà '..c)end end}]])
+    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Обновление не требуется.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
@@ -24,7 +24,7 @@ local success, result = pcall(function() return require 'imgui' end)
 if success then
     imgui = result
 else
-    print("Îøèáêà çàãðóçêè imgui: " .. tostring(result))
+    print("Ошибка загрузки imgui: " .. tostring(result))
 end
 
 local encoding = require("encoding")
@@ -38,7 +38,7 @@ local newServerPort = imgui.ImBuffer(6)
 local newServerName = imgui.ImBuffer(32)
 local deleteServerIndex = imgui.ImInt(1)
 
--- Ñòàíäàðòíûå ñåðâåðà (òîëüêî åñëè ôàéëà íåò)
+-- Стандартные сервера (только если файла нет)
 local defaultServers = {
     {'185.169.134.3', 7777,    'Phoenix'},
     {'185.169.134.4', 7777,    'Tucson'},
@@ -74,7 +74,7 @@ local defaultServers = {
     {'80.66.82.199', 7777,     'Space'},
 }
 
-local servers = {} -- Îñíîâíîé ñïèñîê
+local servers = {} -- Основной список
 
 local configDir = getWorkingDirectory() .. "\\config\\ConnectList\\"
 local serversFile = configDir .. "servers.cfg"
@@ -89,22 +89,22 @@ end
 function loadAllServers()
     createConfigDir()
     
-    -- Î÷èùàåì ñïèñîê
+    -- Очищаем список
     servers = {}
     
-    -- Åñëè ôàéë åñòü - ãðóçèì èç íåãî
+    -- Если файл есть - грузим из него
     if doesFileExist(serversFile) then
         local file = io.open(serversFile, "r")
         if file then
             for line in file:lines() do
                 local ip, port, name = line:match("([^,]+),([^,]+),(.+)$")
                 if ip and port and name then
-                    -- ×èñòèì ñòðîêè
+                    -- Чистим строки
                     ip = ip:gsub("%s+", "")
                     port = port:gsub("%s+", "")
                     name = name:gsub("%s+$", ""):gsub("^%s+", "")
                     
-                    -- Ïðîâåðÿåì ÷òî ïîðò ýòî ÷èñëî
+                    -- Проверяем что порт это число
                     local portNumber = tonumber(port)
                     
                     if ip and portNumber and name and string.len(name) > 0 then
@@ -119,7 +119,7 @@ function loadAllServers()
             file:close()
         end
     else
-        -- Åñëè ôàéëà íåò - èñïîëüçóåì ñòàíäàðòíûå
+        -- Если файла нет - используем стандартные
         for _, server in ipairs(defaultServers) do
             table.insert(servers, {
                 ip = server[1],
@@ -127,14 +127,14 @@ function loadAllServers()
                 name = server[3]
             })
         end
-        -- È ñîõðàíÿåì èõ â ôàéë
+        -- И сохраняем их в файл
         saveAllServers()
     end
     
     return #servers
 end
 
--- ÑÎÕÐÀÍÅÍÈÅ ÑÅÐÂÅÐÎÂ
+-- СОХРАНЕНИЕ СЕРВЕРОВ
 function saveAllServers()
     createConfigDir()
     local file = io.open(serversFile, "w")
@@ -148,7 +148,7 @@ function saveAllServers()
     return false
 end
 
--- Îñòàëüíûå ôóíêöèè òàêèå æå êàê áûëè...
+-- Остальные функции такие же как были...
 function loadNickname()
     createConfigDir()
     if doesFileExist(nicknameFile) then
@@ -178,17 +178,17 @@ end
 
 function addNewServer(ip, port, name)
     if string.len(ip) == 0 or string.len(name) == 0 then
-        return false, "IP è íàçâàíèå íå ìîãóò áûòü ïóñòûìè"
+        return false, "IP и название не могут быть пустыми"
     end
     
     port = tonumber(port)
     if not port or port < 1 or port > 65535 then
-        return false, "Íåâåðíûé ïîðò"
+        return false, "Неверный порт"
     end
     
     for _, server in ipairs(servers) do
         if server.ip == ip and server.port == port then
-            return false, "Ñåðâåð óæå ñóùåñòâóåò"
+            return false, "Сервер уже существует"
         end
     end
     
@@ -200,16 +200,16 @@ function addNewServer(ip, port, name)
     
     saveAllServers()
     
-    return true, "Ñåðâåð äîáàâëåí óñïåøíî: " .. name
+    return true, "Сервер добавлен успешно: " .. name
 end
 
 function removeServer(index)
     if index < 1 or index > #servers then
-        return false, "Íåâåðíûé èíäåêñ"
+        return false, "Неверный индекс"
     end
     
     if #servers <= 1 then
-        return false, "Íåëüçÿ óäàëèòü ïîñëåäíèé ñåðâåð"
+        return false, "Нельзя удалить последний сервер"
     end
     
     local serverName = servers[index].name
@@ -218,7 +218,7 @@ function removeServer(index)
     
     saveAllServers()
     
-    return true, "Ñåðâåð óäàëåí: " .. serverName
+    return true, "Сервер удален: " .. serverName
 end
 
 function main()
@@ -226,10 +226,11 @@ function main()
         return
     end
     
-    -- Îæèäàíèå çàãðóçêè SAMP
+    -- Ожидание загрузки SAMP
     while not isSampAvailable() do
         wait(100)
     end
+    
     
     local serverCount = loadAllServers()
 
@@ -238,9 +239,9 @@ function main()
         sampSetLocalPlayerName(savedNick)
     end
     
-    sampAddChatMessage("[CONNECTION] ConnectList v2.0 çàãðóæåí!", 0x00FF00)
-    sampAddChatMessage(string.format("[CONNECTION] Çàãðóæåíî ñåðâåðîâ: %d", serverCount), 0x00FF00)
-    sampAddChatMessage("[CONNECTION] Êîìàíäû: /conlist èëè /clist", 0x00FF00)
+    sampAddChatMessage("[CONNECTION] ConnectList v2.0 загружен!", 0x00FF00)
+    sampAddChatMessage(string.format("[CONNECTION] Загружено серверов: %d", serverCount), 0x00FF00)
+    sampAddChatMessage("[CONNECTION] Команды: /conlist или /clist", 0x00FF00)
     
     sampRegisterChatCommand("conlist", function()
         conmenu.v = not conmenu.v
@@ -265,29 +266,29 @@ function main()
     end
 end
 
--- Îñòàëüíîé êîä (imgui.OnDrawFrame, apply_custom_style) òàêîé æå êàê áûë...
+-- Остальной код (imgui.OnDrawFrame, apply_custom_style) такой же как был...
 function imgui.OnDrawFrame()
     if not conmenu.v then return end
     
     imgui.SetNextWindowPos(imgui.ImVec2(400, 150), imgui.Cond.FirstUseEver)
     imgui.SetNextWindowSize(imgui.ImVec2(450, 550), imgui.Cond.FirstUseEver)
     
-    imgui.Begin(u8"ConnectList v2.0 | Âñå ñåðâåðà", conmenu, imgui.WindowFlags.NoCollapse)
+    imgui.Begin(u8"ConnectList v2.0 | Все сервера", conmenu, imgui.WindowFlags.NoCollapse)
     
-    -- Íèêíåéì
-    imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), u8"Íèêíåéì:")
+    -- Никнейм
+    imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), u8"Никнейм:")
     imgui.SameLine()
     imgui.PushItemWidth(200)
     imgui.InputText("##nick", nickname)
     
     imgui.SameLine()
-    if imgui.Button(u8"Ñîõðàíèòü", imgui.ImVec2(100, 25)) then
+    if imgui.Button(u8"Сохранить", imgui.ImVec2(100, 25)) then
         if string.len(nickname.v) > 0 then
             sampSetLocalPlayerName(nickname.v)
             if saveNickname(nickname.v) then
-                sampAddChatMessage(u8"Íèê ñîõðàíåí: " .. nickname.v, 0x00FF00)
+                sampAddChatMessage(u8"Ник сохранен: " .. nickname.v, 0x00FF00)
             else
-                sampAddChatMessage(u8"Îøèáêà ñîõðàíåíèÿ íèêà", 0xFF0000)
+                sampAddChatMessage(u8"Ошибка сохранения ника", 0xFF0000)
             end
         end
     end
@@ -296,8 +297,8 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    -- Äîáàâëåíèå ñåðâåðà
-    imgui.TextColored(imgui.ImVec4(0, 1, 1, 1), u8"Äîáàâèòü ñåðâåð:")
+    -- Добавление сервера
+    imgui.TextColored(imgui.ImVec4(0, 1, 1, 1), u8"Добавить сервер:")
     
     imgui.Text(u8"IP:")
     imgui.SameLine()
@@ -306,19 +307,19 @@ function imgui.OnDrawFrame()
     imgui.InputText("##ip", newServerIP)
     
     imgui.SameLine()
-    imgui.Text(u8"Ïîðò:")
+    imgui.Text(u8"Порт:")
     imgui.SameLine()
     imgui.SetCursorPosX(250)
     imgui.PushItemWidth(80)
     imgui.InputText("##port", newServerPort)
     
-    imgui.Text(u8"Íàçâàíèå:")
+    imgui.Text(u8"Название:")
     imgui.SameLine()
     imgui.SetCursorPosX(50)
     imgui.PushItemWidth(200)
     imgui.InputText("##name", newServerName)
     
-    if imgui.Button(u8"Äîáàâèòü ñåðâåð", imgui.ImVec2(200, 30)) then
+    if imgui.Button(u8"Добавить сервер", imgui.ImVec2(200, 30)) then
         local success, message = addNewServer(newServerIP.v, newServerPort.v, newServerName.v)
         if success then
             sampAddChatMessage(message, 0x00FF00)
@@ -326,7 +327,7 @@ function imgui.OnDrawFrame()
             newServerPort.v = '7777'
             newServerName.v = ''
         else
-            sampAddChatMessage(u8"Îøèáêà: " .. message, 0xFF0000)
+            sampAddChatMessage(u8"Ошибка: " .. message, 0xFF0000)
         end
     end
     
@@ -334,8 +335,8 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    -- Óäàëåíèå ñåðâåðà
-    imgui.TextColored(imgui.ImVec4(1, 0.5, 0, 1), u8"Óäàëèòü ñåðâåð:")
+    -- Удаление сервера
+    imgui.TextColored(imgui.ImVec4(1, 0.5, 0, 1), u8"Удалить сервер:")
     
     local serverNames = {}
     for i, server in ipairs(servers) do
@@ -346,7 +347,7 @@ function imgui.OnDrawFrame()
     imgui.Combo("##serverlist", deleteServerIndex, serverNames)
     
     imgui.SameLine()
-    if imgui.Button(u8"Óäàëèòü", imgui.ImVec2(80, 25)) then
+    if imgui.Button(u8"Удалить", imgui.ImVec2(80, 25)) then
         local success, message = removeServer(deleteServerIndex.v)
         if success then
             sampAddChatMessage(message, 0x00FF00)
@@ -354,7 +355,7 @@ function imgui.OnDrawFrame()
                 deleteServerIndex.v = #servers
             end
         else
-            sampAddChatMessage(u8"Îøèáêà: " .. message, 0xFF0000)
+            sampAddChatMessage(u8"Ошибка: " .. message, 0xFF0000)
         end
     end
     
@@ -362,10 +363,10 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    -- Ñïèñîê ñåðâåðîâ
-    imgui.TextColored(imgui.ImVec4(0, 1, 0, 1), u8"Ñïèñîê ñåðâåðîâ:")
+    -- Список серверов
+    imgui.TextColored(imgui.ImVec4(0, 1, 0, 1), u8"Список серверов:")
     imgui.SameLine()
-    imgui.Text(string.format("(%d âñåãî)", #servers))
+    imgui.Text(string.format("(%d всего)", #servers))
     
     imgui.BeginChild("ServerList", imgui.ImVec2(430, 200), true)
     
@@ -378,15 +379,15 @@ function imgui.OnDrawFrame()
     
     imgui.EndChild()
     
-    -- Èíôîðìàöèÿ
+    -- Информация
     imgui.Spacing()
-    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), u8"Êîìàíäû: /conlist èëè /clist")
-    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), u8"Âñå ñåðâåðà ñîõðàíÿþòñÿ â êîíôèã")
+    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), u8"Команды: /conlist или /clist")
+    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), u8"Все сервера сохраняются в конфиг")
     
     imgui.End()
 end
 
--- Ñòèëü
+-- Стиль
 function apply_custom_style()
     imgui.SwitchContext()
     local style = imgui.GetStyle()
