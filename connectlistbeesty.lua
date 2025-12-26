@@ -2,7 +2,7 @@ script_name("Connect")
 script_author("Beesty")
 script_version("26.12.2025")
 
--- АВТООБНОВЛЕНИЕ
+-- РђР’РўРћРћР‘РќРћР’Р›Р•РќР�Р•
 local enable_autoupdate = true
 local autoupdate_loaded = false
 local Update = nil
@@ -33,40 +33,40 @@ if enable_autoupdate then
                                 local latest_version = data.latest
                                 local current_version = thisScript().version
                                 
-                                print(prefix .. "Текущая версия: " .. current_version)
-                                print(prefix .. "Последняя версия: " .. latest_version)
+                                print(prefix .. "РўРµРєСѓС‰Р°СЏ РІРµСЂСЃРёСЏ: " .. current_version)
+                                print(prefix .. "РџРѕСЃР»РµРґРЅСЏСЏ РІРµСЂСЃРёСЏ: " .. latest_version)
                                 
                                 if latest_version ~= current_version then
-                                    print(prefix .. "Найдено обновление!")
+                                    print(prefix .. "РќР°Р№РґРµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ!")
                                     lua_thread.create(function(prefix, update_url, latest_version, current_version)
-                                        sampAddChatMessage(prefix .. 'Найдено обновление!', -1)
-                                        sampAddChatMessage(prefix .. 'Текущая: ' .. current_version .. ' -> Новая: ' .. latest_version, -1)
+                                        sampAddChatMessage(prefix .. 'РќР°Р№РґРµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ!', -1)
+                                        sampAddChatMessage(prefix .. 'РўРµРєСѓС‰Р°СЏ: ' .. current_version .. ' -> РќРѕРІР°СЏ: ' .. latest_version, -1)
                                         wait(1000)
                                         
                                         downloadUrlToFile(update_url, thisScript().path, function(id2, status2, downloaded2, total2)
                                             if status2 == download_status.STATUS_DOWNLOADINGDATA then
                                                 local percent = math.floor((downloaded2 / total2) * 100)
-                                                print(prefix .. "Загружено: " .. percent .. "%")
+                                                print(prefix .. "Р—Р°РіСЂСѓР¶РµРЅРѕ: " .. percent .. "%")
                                             elseif status2 == download_status.STATUS_ENDDOWNLOADDATA then
-                                                sampAddChatMessage(prefix .. 'Обновление успешно загружено!', -1)
-                                                sampAddChatMessage(prefix .. 'Перезагружаем скрипт...', -1)
+                                                sampAddChatMessage(prefix .. 'РћР±РЅРѕРІР»РµРЅРёРµ СѓСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅРѕ!', -1)
+                                                sampAddChatMessage(prefix .. 'РџРµСЂРµР·Р°РіСЂСѓР¶Р°РµРј СЃРєСЂРёРїС‚...', -1)
                                                 wait(1500)
                                                 thisScript():reload()
                                             end
                                         end)
                                     end, prefix, update_url, latest_version, current_version)
                                 else
-                                    print(prefix .. "У вас последняя версия")
+                                    print(prefix .. "РЈ РІР°СЃ РїРѕСЃР»РµРґРЅСЏСЏ РІРµСЂСЃРёСЏ")
                                 end
                             else
-                                print(prefix .. "Ошибка парсинга JSON")
+                                print(prefix .. "РћС€РёР±РєР° РїР°СЂСЃРёРЅРіР° JSON")
                             end
                         else
-                            print(prefix .. "Ошибка чтения файла")
+                            print(prefix .. "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р°")
                         end
                     end
                 elseif status == download_status.STATUS_ERROR then
-                    print(prefix .. "Ошибка загрузки информации об обновлении")
+                    print(prefix .. "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕР±РЅРѕРІР»РµРЅРёРё")
                 end
             end)
             
@@ -75,7 +75,7 @@ if enable_autoupdate then
             end
             
             if os.clock() - start_time >= 10 then
-                print(prefix .. 'Таймаут при проверке обновлений')
+                print(prefix .. 'РўР°Р№РјР°СѓС‚ РїСЂРё РїСЂРѕРІРµСЂРєРµ РѕР±РЅРѕРІР»РµРЅРёР№')
             end
         end
     }]])
@@ -97,10 +97,10 @@ local success, result = pcall(function() return require 'imgui' end)
 if success then
     imgui = result
 else
-    print("Ошибка загрузки imgui: " .. tostring(result))
+    print("РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё imgui: " .. tostring(result))
 end
 
--- Для Windows-1251 кодировки
+-- Р”Р»СЏ Windows-1251 РєРѕРґРёСЂРѕРІРєРё
 local encoding = require("encoding")
 encoding.default = 'CP1251'
 local u8 = encoding.UTF8
@@ -249,17 +249,17 @@ end
 
 function addNewServer(ip, port, name)
     if string.len(ip) == 0 or string.len(name) == 0 then
-        return false, "IP и название не могут быть пустыми"
+        return false, "IP Рё РЅР°Р·РІР°РЅРёРµ РЅРµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹РјРё"
     end
     
     port = tonumber(port)
     if not port or port < 1 or port > 65535 then
-        return false, "Неверный порт"
+        return false, "РќРµРІРµСЂРЅС‹Р№ РїРѕСЂС‚"
     end
     
     for _, server in ipairs(servers) do
         if server.ip == ip and server.port == port then
-            return false, "Сервер уже существует"
+            return false, "РЎРµСЂРІРµСЂ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚"
         end
     end
     
@@ -271,23 +271,23 @@ function addNewServer(ip, port, name)
     
     saveAllServers()
     
-    return true, "Сервер добавлен успешно: " .. name
+    return true, "РЎРµСЂРІРµСЂ РґРѕР±Р°РІР»РµРЅ СѓСЃРїРµС€РЅРѕ: " .. name
 end
 
 function removeServer(index)
     if index < 1 or index > #servers then
-        return false, "Неверный индекс"
+        return false, "РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ"
     end
     
     if #servers <= 1 then
-        return false, "Нельзя удалить последний сервер"
+        return false, "РќРµР»СЊР·СЏ СѓРґР°Р»РёС‚СЊ РїРѕСЃР»РµРґРЅРёР№ СЃРµСЂРІРµСЂ"
     end
     
     local serverName = servers[index].name
     table.remove(servers, index)
     saveAllServers()
     
-    return true, "Сервер удален: " .. serverName
+    return true, "РЎРµСЂРІРµСЂ СѓРґР°Р»РµРЅ: " .. serverName
 end
 
 function main()
@@ -313,9 +313,9 @@ function main()
         sampSetLocalPlayerName(savedNick)
     end
     
-    sampAddChatMessage("[CONNECTION] ConnectList v" .. thisScript().version .. " загружен!", 0x00FF00)
-    sampAddChatMessage(string.format("[CONNECTION] Загружено серверов: %d", serverCount), 0x00FF00)
-    sampAddChatMessage("[CONNECTION] Команды: /conlist или /clist", 0x00FF00)
+    sampAddChatMessage("[CONNECTION] ConnectList v" .. thisScript().version .. " Р·Р°РіСЂСѓР¶РµРЅ!", 0x00FF00)
+    sampAddChatMessage(string.format("[CONNECTION] Р—Р°РіСЂСѓР¶РµРЅРѕ СЃРµСЂРІРµСЂРѕРІ: %d", serverCount), 0x00FF00)
+    sampAddChatMessage("[CONNECTION] РљРѕРјР°РЅРґС‹: /conlist РёР»Рё /clist", 0x00FF00)
     
     sampRegisterChatCommand("conlist", function()
         conmenu.v = not conmenu.v
@@ -346,22 +346,22 @@ function imgui.OnDrawFrame()
     imgui.SetNextWindowPos(imgui.ImVec2(400, 150), imgui.Cond.FirstUseEver)
     imgui.SetNextWindowSize(imgui.ImVec2(450, 550), imgui.Cond.FirstUseEver)
     
-    imgui.Begin("ConnectList v" .. thisScript().version .. " | Все сервера", conmenu, imgui.WindowFlags.NoCollapse)
+    imgui.Begin("ConnectList v" .. thisScript().version .. " | Р’СЃРµ СЃРµСЂРІРµСЂР°", conmenu, imgui.WindowFlags.NoCollapse)
     
-    -- Без u8 для русских текстов - будет работать с Windows-1251
-    imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), "Никнейм:")
+    -- Р‘РµР· u8 РґР»СЏ СЂСѓСЃСЃРєРёС… С‚РµРєСЃС‚РѕРІ - Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ СЃ Windows-1251
+    imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), "РќРёРєРЅРµР№Рј:")
     imgui.SameLine()
     imgui.PushItemWidth(200)
     imgui.InputText("##nick", nickname)
     
     imgui.SameLine()
-    if imgui.Button("Сохранить", imgui.ImVec2(100, 25)) then
+    if imgui.Button("РЎРѕС…СЂР°РЅРёС‚СЊ", imgui.ImVec2(100, 25)) then
         if string.len(nickname.v) > 0 then
             sampSetLocalPlayerName(nickname.v)
             if saveNickname(nickname.v) then
-                sampAddChatMessage("Ник сохранен: " .. nickname.v, 0x00FF00)
+                sampAddChatMessage("РќРёРє СЃРѕС…СЂР°РЅРµРЅ: " .. nickname.v, 0x00FF00)
             else
-                sampAddChatMessage("Ошибка сохранения ника", 0xFF0000)
+                sampAddChatMessage("РћС€РёР±РєР° СЃРѕС…СЂР°РЅРµРЅРёСЏ РЅРёРєР°", 0xFF0000)
             end
         end
     end
@@ -370,7 +370,7 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    imgui.TextColored(imgui.ImVec4(0, 1, 1, 1), "Добавить сервер:")
+    imgui.TextColored(imgui.ImVec4(0, 1, 1, 1), "Р”РѕР±Р°РІРёС‚СЊ СЃРµСЂРІРµСЂ:")
     
     imgui.Text("IP:")
     imgui.SameLine()
@@ -379,19 +379,19 @@ function imgui.OnDrawFrame()
     imgui.InputText("##ip", newServerIP)
     
     imgui.SameLine()
-    imgui.Text("Порт:")
+    imgui.Text("РџРѕСЂС‚:")
     imgui.SameLine()
     imgui.SetCursorPosX(250)
     imgui.PushItemWidth(80)
     imgui.InputText("##port", newServerPort)
     
-    imgui.Text("Название:")
+    imgui.Text("РќР°Р·РІР°РЅРёРµ:")
     imgui.SameLine()
     imgui.SetCursorPosX(50)
     imgui.PushItemWidth(200)
     imgui.InputText("##name", newServerName)
     
-    if imgui.Button("Добавить сервер", imgui.ImVec2(200, 30)) then
+    if imgui.Button("Р”РѕР±Р°РІРёС‚СЊ СЃРµСЂРІРµСЂ", imgui.ImVec2(200, 30)) then
         local success, message = addNewServer(newServerIP.v, newServerPort.v, newServerName.v)
         if success then
             sampAddChatMessage(message, 0x00FF00)
@@ -399,7 +399,7 @@ function imgui.OnDrawFrame()
             newServerPort.v = '7777'
             newServerName.v = ''
         else
-            sampAddChatMessage("Ошибка: " .. message, 0xFF0000)
+            sampAddChatMessage("РћС€РёР±РєР°: " .. message, 0xFF0000)
         end
     end
     
@@ -407,7 +407,7 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    imgui.TextColored(imgui.ImVec4(1, 0.5, 0, 1), "Удалить сервер:")
+    imgui.TextColored(imgui.ImVec4(1, 0.5, 0, 1), "РЈРґР°Р»РёС‚СЊ СЃРµСЂРІРµСЂ:")
     
     local serverNames = {}
     for i, server in ipairs(servers) do
@@ -418,7 +418,7 @@ function imgui.OnDrawFrame()
     imgui.Combo("##serverlist", deleteServerIndex, serverNames)
     
     imgui.SameLine()
-    if imgui.Button("Удалить", imgui.ImVec2(80, 25)) then
+    if imgui.Button("РЈРґР°Р»РёС‚СЊ", imgui.ImVec2(80, 25)) then
         local success, message = removeServer(deleteServerIndex.v)
         if success then
             sampAddChatMessage(message, 0x00FF00)
@@ -426,7 +426,7 @@ function imgui.OnDrawFrame()
                 deleteServerIndex.v = #servers
             end
         else
-            sampAddChatMessage("Ошибка: " .. message, 0xFF0000)
+            sampAddChatMessage("РћС€РёР±РєР°: " .. message, 0xFF0000)
         end
     end
     
@@ -434,9 +434,9 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    imgui.TextColored(imgui.ImVec4(0, 1, 0, 1), "Список серверов:")
+    imgui.TextColored(imgui.ImVec4(0, 1, 0, 1), "РЎРїРёСЃРѕРє СЃРµСЂРІРµСЂРѕРІ:")
     imgui.SameLine()
-    imgui.Text(string.format("(%d всего)", #servers))
+    imgui.Text(string.format("(%d РІСЃРµРіРѕ)", #servers))
     
     imgui.BeginChild("ServerList", imgui.ImVec2(430, 200), true)
     
@@ -450,8 +450,8 @@ function imgui.OnDrawFrame()
     imgui.EndChild()
     
     imgui.Spacing()
-    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), "Команды: /conlist или /clist")
-    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), "Все сервера сохраняются в конфиг")
+    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), "РљРѕРјР°РЅРґС‹: /conlist РёР»Рё /clist")
+    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), "Р’СЃРµ СЃРµСЂРІРµСЂР° СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ РєРѕРЅС„РёРі")
     
     imgui.End()
 end
@@ -480,4 +480,3 @@ function apply_custom_style()
 end
 
 apply_custom_style()
-
