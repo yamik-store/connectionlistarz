@@ -1,6 +1,6 @@
 ﻿script_name("ConnectList")
 script_author("Beesty")
-script_version("29.12.2025")
+script_version("26.12.2025")
 
 -- АВТООБНОВЛЕНИЕ
 local enable_autoupdate = true
@@ -481,5 +481,6 @@ function apply_custom_style()
     colors[clr.ButtonActive] = ImVec4(0.95, 0.55, 0.20, 1)
     colors[clr.Text] = ImVec4(1, 1, 1, 1)
 end
+
 
 apply_custom_style()
