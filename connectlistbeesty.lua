@@ -1,6 +1,6 @@
 script_name("Connect")
 script_author("Beesty")
-script_version("29.12.2025")
+script_version("26.12.2025")
 
 -- АВТООБНОВЛЕНИЕ
 local enable_autoupdate = true
@@ -480,3 +480,4 @@ function apply_custom_style()
 end
 
 apply_custom_style()
+
