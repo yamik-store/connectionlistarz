@@ -1,4 +1,4 @@
-﻿script_name("ConnectList")
+script_name("ConnectList")
 script_author("Beesty")
 script_version("26.12.2025")
 
@@ -33,8 +33,8 @@ if enable_autoupdate then
                                 local latest_version = data.latest
                                 local current_version = thisScript().version
                                 
-                                print(prefix .. "Текущая версия: " .. current_version)
-                                print(prefix .. "Последняя версия: " .. latest_version)
+                                print(prefix .. "Current version: " .. current_version)
+                                print(prefix .. "Last version: " .. latest_version)
                                 
                                 if latest_version ~= current_version then
                                     print(prefix .. "Найдено обновление!")
@@ -56,13 +56,13 @@ if enable_autoupdate then
                                         end)
                                     end, prefix, update_url, latest_version, current_version)
                                 else
-                                    print(prefix .. "У вас последняя версия")
+                                    print(prefix .. "You have the latest version.")
                                 end
                             else
-                                print(prefix .. "Ошибка парсинга JSON")
+                                print(prefix .. "Error reading JSON")
                             end
                         else
-                            print(prefix .. "Ошибка чтения файла")
+                            print(prefix .. "Error reading file")
                         end
                     end
                 elseif status == download_status.STATUS_ERROR then
@@ -97,13 +97,14 @@ local success, result = pcall(function() return require 'imgui' end)
 if success then
     imgui = result
 else
-    print("Ошибка загрузки imgui: " .. tostring(result))
+    print("Load Error imgui: " .. tostring(result))
 end
 
 -- UTF-8 кодировка
 local encoding = require("encoding")
 encoding.default = 'CP1251'
 local u8 = encoding.UTF8
+local cp1251 = encoding.CP1251
 
 local conmenu = imgui.ImBool(false)
 local nickname = imgui.ImBuffer(32)
@@ -186,7 +187,7 @@ function loadAllServers()
                             name = name
                         })
                     else
-                        print("Ошибка данных сервера: " .. line)
+                        print("Server data error: " .. line)
                     end
                 end
             end
@@ -250,17 +251,17 @@ end
 
 function addNewServer(ip, port, name)
     if string.len(ip) == 0 or string.len(name) == 0 then
-        return false, "IP и название не могут быть пустыми"
+        return false, "IP and name cannot be empty"
     end
     
     port = tonumber(port)
     if not port or port < 1 or port > 65535 then
-        return false, "Неверный порт"
+        return false, "Invalide port"
     end
     
     for _, server in ipairs(servers) do
         if server.ip == ip and server.port == port then
-            return false, "Сервер уже существует"
+            return false, "The server already exists"
         end
     end
     
@@ -272,23 +273,23 @@ function addNewServer(ip, port, name)
     
     saveAllServers()
     
-    return true, "Сервер добавлен успешно: " .. name
+    return true, "Server added successfully: " .. name
 end
 
 function removeServer(index)
     if index < 1 or index > #servers then
-        return false, "Неверный индекс"
+        return false, "Neverniy port"
     end
     
     if #servers <= 1 then
-        return false, "Нельзя удалить последний сервер"
+        return false, "Can't delete last server"
     end
     
     local serverName = servers[index].name
     table.remove(servers, index)
     saveAllServers()
     
-    return true, "Сервер удален: " .. serverName
+    return true, "Server Deleteted: " .. serverName
 end
 
 function main()
@@ -315,9 +316,9 @@ function main()
     end
     
     -- Сообщения без u8 - будут нормально отображаться
-    sampAddChatMessage("[CONNECTION] ConnectList v" .. thisScript().version .. " загружен!", 0x00FF00)
-    sampAddChatMessage("[CONNECTION] Загружено серверов: " .. serverCount, 0x00FF00)
-    sampAddChatMessage("[CONNECTION] Команды: /conlist или /clist", 0x00FF00)
+    sampAddChatMessage("[CONNECTION] ConnectList v 1.0 load!", 0x00FF00)
+    sampAddChatMessage("[CONNECTION] Load Servers : " .. serverCount, 0x00FF00)
+    sampAddChatMessage("[CONNECTION] Command: /conlist And /clist", 0x00FF00)
     
     sampRegisterChatCommand("conlist", function()
         conmenu.v = not conmenu.v
@@ -362,9 +363,9 @@ function imgui.OnDrawFrame()
         if string.len(nickname.v) > 0 then
             sampSetLocalPlayerName(nickname.v)
             if saveNickname(nickname.v) then
-                sampAddChatMessage("Ник сохранен: " .. nickname.v, 0x00FF00)
+                sampAddChatMessage("nickname saved: " .. nickname.v, 0x00FF00)
             else
-                sampAddChatMessage("Ошибка сохранения ника", 0xFF0000)
+                sampAddChatMessage("Error nick", 0xFF0000)
             end
         end
     end
@@ -429,7 +430,7 @@ function imgui.OnDrawFrame()
                 deleteServerIndex.v = #servers
             end
         else
-            sampAddChatMessage("Ошибка: " .. message, 0xFF0000)
+            sampAddChatMessage("Error: " .. message, 0xFF0000)
         end
     end
     
