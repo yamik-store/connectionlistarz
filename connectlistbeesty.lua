@@ -100,7 +100,7 @@ else
     print("Ошибка загрузки imgui: " .. tostring(result))
 end
 
--- Для Windows-1251 кодировки
+-- UTF-8 кодировка
 local encoding = require("encoding")
 encoding.default = 'CP1251'
 local u8 = encoding.UTF8
@@ -167,41 +167,40 @@ function loadAllServers()
         local file = io.open(serversFile, "r")
         if file then
             for line in file:lines() do
-                -- Ищем IP, порт и название
-                local ip, port_str, name = line:match("([^,]+),([^,]+),(.+)$")
-                if ip and port_str and name then
-                    -- Очистка строк
-                    ip = ip:gsub("%s+", "")
-                    port_str = port_str:gsub("%s+", "")
-                    name = name:gsub("%s+$", ""):gsub("^%s+", "")
+                local parts = {}
+                for part in line:gmatch("([^,]+)") do
+                    table.insert(parts, part:gsub("^%s*(.-)%s*$", "%1"))
+                end
+                
+                if #parts >= 3 then
+                    local ip = parts[1]
+                    local port_str = parts[2]
+                    local name = parts[3]
                     
-                    -- Преобразуем порт в число
                     local port = tonumber(port_str)
+                    if not port then
+                        port = 7777
+                    end
                     
-                    -- Проверяем все данные
                     if ip and port and name and string.len(ip) > 0 and string.len(name) > 0 then
                         table.insert(servers, {
                             ip = ip,
-                            port = port,  -- Убедись что port это число
+                            port = port,
                             name = name
                         })
-                    else
-                        print("Ошибка данных сервера: " .. line)
                     end
                 end
             end
             file:close()
         end
     else
-        -- Если файла нет - используем стандартные
         for _, server in ipairs(defaultServers) do
             table.insert(servers, {
                 ip = server[1],
-                port = server[2],  -- Здесь порт уже число
+                port = server[2],
                 name = server[3]
             })
         end
-        -- Сохраняем в файл
         saveAllServers()
     end
     
@@ -229,7 +228,7 @@ function loadNickname()
             local savedNick = file:read("*line")
             file:close()
             if savedNick and string.len(savedNick) > 0 then
-                nickname.v = savedNick
+                nickname.v = u8(savedNick)
                 return savedNick
             end
         end
@@ -250,17 +249,17 @@ end
 
 function addNewServer(ip, port, name)
     if string.len(ip) == 0 or string.len(name) == 0 then
-        return false, "IP и название не могут быть пустыми"
+        return false, u8"IP и название не могут быть пустыми"
     end
     
     port = tonumber(port)
     if not port or port < 1 or port > 65535 then
-        return false, "Неверный порт"
+        return false, u8"Неверный порт"
     end
     
     for _, server in ipairs(servers) do
         if server.ip == ip and server.port == port then
-            return false, "Сервер уже существует"
+            return false, u8"Сервер уже существует"
         end
     end
     
@@ -272,23 +271,23 @@ function addNewServer(ip, port, name)
     
     saveAllServers()
     
-    return true, "Сервер добавлен успешно: " .. name
+    return true, u8"Сервер добавлен успешно: " .. name
 end
 
 function removeServer(index)
     if index < 1 or index > #servers then
-        return false, "Неверный индекс"
+        return false, u8"Неверный индекс"
     end
     
     if #servers <= 1 then
-        return false, "Нельзя удалить последний сервер"
+        return false, u8"Нельзя удалить последний сервер"
     end
     
     local serverName = servers[index].name
     table.remove(servers, index)
     saveAllServers()
     
-    return true, "Сервер удален: " .. serverName
+    return true, u8"Сервер удален: " .. serverName
 end
 
 function main()
@@ -314,9 +313,9 @@ function main()
         sampSetLocalPlayerName(savedNick)
     end
     
-    sampAddChatMessage("[CONNECTION] ConnectList v" .. thisScript().version .. " загружен!", 0x00FF00)
-    sampAddChatMessage(string.format("[CONNECTION] Загружено серверов: %d", serverCount), 0x00FF00)
-    sampAddChatMessage("[CONNECTION] Команды: /conlist или /clist", 0x00FF00)
+    sampAddChatMessage(u8"[CONNECTION] ConnectList v" .. thisScript().version .. u8" загружен!", 0x00FF00)
+    sampAddChatMessage(u8"[CONNECTION] Загружено серверов: " .. serverCount, 0x00FF00)
+    sampAddChatMessage(u8"[CONNECTION] Команды: /conlist или /clist", 0x00FF00)
     
     sampRegisterChatCommand("conlist", function()
         conmenu.v = not conmenu.v
@@ -347,22 +346,22 @@ function imgui.OnDrawFrame()
     imgui.SetNextWindowPos(imgui.ImVec2(400, 150), imgui.Cond.FirstUseEver)
     imgui.SetNextWindowSize(imgui.ImVec2(450, 550), imgui.Cond.FirstUseEver)
     
-    imgui.Begin("ConnectList v" .. thisScript().version .. " | Все сервера", conmenu, imgui.WindowFlags.NoCollapse)
+    imgui.Begin(u8"ConnectList v" .. thisScript().version .. u8" | Все сервера", conmenu, imgui.WindowFlags.NoCollapse)
     
-    -- Без u8 для русских текстов - будет работать с Windows-1251
-    imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), "Никнейм:")
+    -- Все русские тексты через u8
+    imgui.TextColored(imgui.ImVec4(1, 1, 0, 1), u8"Никнейм:")
     imgui.SameLine()
     imgui.PushItemWidth(200)
     imgui.InputText("##nick", nickname)
     
     imgui.SameLine()
-    if imgui.Button("Сохранить", imgui.ImVec2(100, 25)) then
+    if imgui.Button(u8"Сохранить", imgui.ImVec2(100, 25)) then
         if string.len(nickname.v) > 0 then
             sampSetLocalPlayerName(nickname.v)
             if saveNickname(nickname.v) then
-                sampAddChatMessage("Ник сохранен: " .. nickname.v, 0x00FF00)
+                sampAddChatMessage(u8"Ник сохранен: " .. nickname.v, 0x00FF00)
             else
-                sampAddChatMessage("Ошибка сохранения ника", 0xFF0000)
+                sampAddChatMessage(u8"Ошибка сохранения ника", 0xFF0000)
             end
         end
     end
@@ -371,28 +370,28 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    imgui.TextColored(imgui.ImVec4(0, 1, 1, 1), "Добавить сервер:")
+    imgui.TextColored(imgui.ImVec4(0, 1, 1, 1), u8"Добавить сервер:")
     
-    imgui.Text("IP:")
+    imgui.Text(u8"IP:")
     imgui.SameLine()
     imgui.SetCursorPosX(50)
     imgui.PushItemWidth(150)
     imgui.InputText("##ip", newServerIP)
     
     imgui.SameLine()
-    imgui.Text("Порт:")
+    imgui.Text(u8"Порт:")
     imgui.SameLine()
     imgui.SetCursorPosX(250)
     imgui.PushItemWidth(80)
     imgui.InputText("##port", newServerPort)
     
-    imgui.Text("Название:")
+    imgui.Text(u8"Название:")
     imgui.SameLine()
     imgui.SetCursorPosX(50)
     imgui.PushItemWidth(200)
     imgui.InputText("##name", newServerName)
     
-    if imgui.Button("Добавить сервер", imgui.ImVec2(200, 30)) then
+    if imgui.Button(u8"Добавить сервер", imgui.ImVec2(200, 30)) then
         local success, message = addNewServer(newServerIP.v, newServerPort.v, newServerName.v)
         if success then
             sampAddChatMessage(message, 0x00FF00)
@@ -400,7 +399,7 @@ function imgui.OnDrawFrame()
             newServerPort.v = '7777'
             newServerName.v = ''
         else
-            sampAddChatMessage("Ошибка: " .. message, 0xFF0000)
+            sampAddChatMessage(u8"Ошибка: " .. message, 0xFF0000)
         end
     end
     
@@ -408,7 +407,7 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    imgui.TextColored(imgui.ImVec4(1, 0.5, 0, 1), "Удалить сервер:")
+    imgui.TextColored(imgui.ImVec4(1, 0.5, 0, 1), u8"Удалить сервер:")
     
     local serverNames = {}
     for i, server in ipairs(servers) do
@@ -419,7 +418,7 @@ function imgui.OnDrawFrame()
     imgui.Combo("##serverlist", deleteServerIndex, serverNames)
     
     imgui.SameLine()
-    if imgui.Button("Удалить", imgui.ImVec2(80, 25)) then
+    if imgui.Button(u8"Удалить", imgui.ImVec2(80, 25)) then
         local success, message = removeServer(deleteServerIndex.v)
         if success then
             sampAddChatMessage(message, 0x00FF00)
@@ -427,7 +426,7 @@ function imgui.OnDrawFrame()
                 deleteServerIndex.v = #servers
             end
         else
-            sampAddChatMessage("Ошибка: " .. message, 0xFF0000)
+            sampAddChatMessage(u8"Ошибка: " .. message, 0xFF0000)
         end
     end
     
@@ -435,11 +434,11 @@ function imgui.OnDrawFrame()
     imgui.Separator()
     imgui.Spacing()
     
-    imgui.TextColored(imgui.ImVec4(0, 1, 0, 1), "Список серверов:")
+    imgui.TextColored(imgui.ImVec4(0, 1, 0, 1), u8"Список серверов:")
     imgui.SameLine()
-    imgui.Text(string.format("(%d всего)", #servers))
+    imgui.Text(string.format(u8"(%d всего)", #servers))
     
-    imgui.BeginChild("ServerList", imgui.ImVec2(430, 200), true)
+    imgui.BeginChild(u8"ServerList", imgui.ImVec2(430, 200), true)
     
     for i, server in ipairs(servers) do
         local buttonText = string.format("%s (%s:%d)", server.name, server.ip, server.port)
@@ -451,8 +450,8 @@ function imgui.OnDrawFrame()
     imgui.EndChild()
     
     imgui.Spacing()
-    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), "Команды: /conlist или /clist")
-    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), "Все сервера сохраняются в конфиг")
+    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), u8"Команды: /conlist или /clist")
+    imgui.TextColored(imgui.ImVec4(1, 1, 1, 0.7), u8"Все сервера сохраняются в конфиг")
     
     imgui.End()
 end
@@ -481,4 +480,3 @@ function apply_custom_style()
 end
 
 apply_custom_style()
-
